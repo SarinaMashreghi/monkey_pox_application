@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Monkeypox Detection</string>
+    <string name="link"><a href="https://www.quebec.ca/en/health/health-issues/a-z/monkeypox">More information</a></string>
+</resources>
