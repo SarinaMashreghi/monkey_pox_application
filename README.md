@@ -1,0 +1,1 @@
+# monkey_pox_application
