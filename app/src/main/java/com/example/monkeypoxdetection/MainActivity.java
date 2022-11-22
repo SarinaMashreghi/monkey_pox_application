@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.monkeypoxdetection.ml.Efficientnnetb7ModelOptimized;
 import com.example.monkeypoxdetection.ml.MonkeypoxModelNet3;
 
 import org.tensorflow.lite.DataType;
@@ -135,15 +136,24 @@ public class MainActivity extends AppCompatActivity {
         ByteBuffer byteBuffer = tbuffer.getBuffer();
 
         try {
-            MonkeypoxModelNet3 model = MonkeypoxModelNet3.newInstance(this);
+//            MonkeypoxModelNet3 model = MonkeypoxModelNet3.newInstance(this);
+//
+//            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
+//            Log.d("shape", byteBuffer.toString());
+//            Log.d("shape", inputFeature0.toString());
+//            inputFeature0.loadBuffer(byteBuffer);
+//
+//            MonkeypoxModelNet3.Outputs outputs = model.process(inputFeature0);
+//            float[] outputFeature0 = outputs.getOutputFeature0AsTensorBuffer().getFloatArray();
+
+            Efficientnnetb7ModelOptimized model = Efficientnnetb7ModelOptimized.newInstance(this);
 
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
-            Log.d("shape", byteBuffer.toString());
-            Log.d("shape", inputFeature0.toString());
             inputFeature0.loadBuffer(byteBuffer);
 
-            MonkeypoxModelNet3.Outputs outputs = model.process(inputFeature0);
+            Efficientnnetb7ModelOptimized.Outputs outputs = model.process(inputFeature0);
             float[] outputFeature0 = outputs.getOutputFeature0AsTensorBuffer().getFloatArray();
+//            TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             int maxInd = getMaxInd(outputFeature0);
 //            txt.setText(labels.get(maxInd)+ outputFeature0[maxInd]);     old version
