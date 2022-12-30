@@ -1,5 +1,6 @@
 package com.example.monkeypoxdetection;
 
+import com.example.monkeypoxdetection.TakePic;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -197,6 +198,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openCamera(View v) {
+
+        TakePic tp = new TakePic();
+        tp.captureImage(v);
 //        Intent i = new Intent(this, Camera.class);
 //        startActivity(i);
 
