@@ -36,10 +36,10 @@ public class TakePic extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera);
+//        setContentView(R.layout.activity_camera);
 
-        image = findViewById(R.id.imgView);
-        captureBtn = findViewById(R.id.captureBtn);
+//        image = findViewById(R.id.imgView);
+//        captureBtn = findViewById(R.id.captureBtn);
     }
 
     public void captureImage(View v){

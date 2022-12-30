@@ -1,6 +1,8 @@
 package com.example.monkeypoxdetection;
 
-import com.example.monkeypoxdetection.TakePic;
+//import com.example.monkeypoxdetection.TakePic;
+import com.example.monkeypoxdetection.ml.Efficientnetb7ModelOptimized;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 //    TextView txt;
     ArrayList<String> labels;
     Uri selectedImage;
+    Uri image_uri;
     final int PERMISSION_CODE = 1000;
 
     @Override
@@ -153,12 +156,12 @@ public class MainActivity extends AppCompatActivity {
 //            MonkeypoxModelNet3.Outputs outputs = model.process(inputFeature0);
 //            float[] outputFeature0 = outputs.getOutputFeature0AsTensorBuffer().getFloatArray();
 
-            EfficientnnNetb7ModelOptimized model = EfficientnnNetb7ModelOptimized.newInstance(this);
+            Efficientnetb7ModelOptimized model = Efficientnetb7ModelOptimized.newInstance(this);
 
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
             inputFeature0.loadBuffer(byteBuffer);
 
-            Efficientnnnetb7ModelOptimized.Outputs outputs = model.process(inputFeature0);
+            Efficientnetb7ModelOptimized.Outputs outputs = model.process(inputFeature0);
             float[] outputFeature0 = outputs.getOutputFeature0AsTensorBuffer().getFloatArray();
 //            TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
@@ -197,10 +200,9 @@ public class MainActivity extends AppCompatActivity {
         return ind;
     }
 
-    public void openCamera(View v) {
+    public void captureImage(View v) {
 
-        TakePic tp = new TakePic();
-        tp.captureImage(v);
+
 //        Intent i = new Intent(this, Camera.class);
 //        startActivity(i);
 
@@ -228,45 +230,37 @@ public class MainActivity extends AppCompatActivity {
 
 
             } else {
-                takePic();
+                openCamera();
             }
         } else {
-            takePic();
+            openCamera();
         }
     }
 
-    public void takePic() {
-        ImageButton captureBtn;
-        ImageView image;
-        Uri image_uri;
-        Bitmap bitmap;
+    public void openCamera() {
+
 
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
 
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        image = findViewById(R.id.imgView);
-        captureBtn = findViewById(R.id.captureBtn);
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        ActivityResultLauncher<Intent> someActivityResultLauncher;
         someActivityResultLauncher.launch(cameraIntent);
+    }
+
+    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
 
 
-        someActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-
-                            image.setImageURI(image_uri);
-
-
-                            Bundle b = new Bundle();
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        Bundle b = new Bundle();
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
 
 
 //                        try {
@@ -276,24 +270,23 @@ public class MainActivity extends AppCompatActivity {
 //                        }
 
 //                        b.putParcelable("image", bitmap);
-                            i.putExtra("image_uri", image_uri);
-                            startActivity(i);
+                        i.putExtra("image_uri", image_uri);
+                        startActivity(i);
 
-                        }
                     }
-                });
+                }
+            });
 
-        public void onRequestPermissionsResult (int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults){
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            switch (requestCode) {
-                case PERMISSION_CODE: {
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        takePic();
-                    } else {
-                        Toast.makeText(this, "Permission denied ...", Toast.LENGTH_SHORT).show();
-                    }
+        switch (requestCode) {
+            case PERMISSION_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamera();
+                } else {
+                    Toast.makeText(this, "Permission denied ...", Toast.LENGTH_SHORT).show();
                 }
             }
         }
